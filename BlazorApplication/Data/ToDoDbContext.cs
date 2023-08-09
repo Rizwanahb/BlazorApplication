@@ -3,6 +3,7 @@ using BlazorApplication.Model;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Runtime.CompilerServices;
 using BlazorApplication.Pages;
+using ToDo = BlazorApplication.Model.ToDo;
 
 namespace BlazorApplication.Data
 {
@@ -11,20 +12,20 @@ namespace BlazorApplication.Data
         public ToDoDbContext() { }
         public ToDoDbContext(DbContextOptions<ToDoDbContext> options) : base(options) { }
 
-        public DbSet<todo> Todo { get; set; }
+        public DbSet<Model.ToDo> Todos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
 
-            modelBuilder.Entity<todo>().HasData(
+            modelBuilder.Entity<ToDo>().HasData(
                new()
                {
                    id = 1,
                    Title = "Reading",
                    Description = "Read atleast 2 books in a week",
-                   DateTime = DateTime.Now,
-                   IsDone= true
+                  // DateTime = DateTime.Now,
+                   //IsDone= true
 
 
 
@@ -34,8 +35,8 @@ namespace BlazorApplication.Data
                    id = 2,
                    Title = "Washing",
                    Description = "Do laundary",
-                   DateTime = DateTime.Now,
-                   IsDone = false
+                  // DateTime = DateTime.Now,
+                   //IsDone = false
                }
                );
         }

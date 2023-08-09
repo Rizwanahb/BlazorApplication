@@ -1,0 +1,166 @@
+﻿@page "/todo"
+@using BlazorApplication.Model
+@using BlazorApplication.Data
+@inject ToDoService ToDoService
+@inject NavigationManager NavigationManager
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<PageTitle>ToDo</PageTitle>
+<!---<h1>@userId</h1>--->
+
+
+<h3>ToDo Items </h3>
+
+<hr />
+
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <input for="Title" placeholder="Task Title" class="form-control" @bind=todo_obj.Title />
+                <input for="Description" placeholder="Task Description" class="form-control" @bind=todo_obj.Description />
+            </div>
+            </div>
+            </div>
+            
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@CreateToDo" value="Save" />
+                <input type="button" class="btn btn-primary" @onclick="@Cancel" value="Cancel" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<br>
+
+<h3>ToDos List</h3>
+
+<hr />
+
+@if (todoObj is null)
+{
+    <p><em>Loading.................</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Task No
+                </th>
+
+                <th>
+                    Title
+                </th>
+
+                <th>
+                    Description
+                </th>
+
+                
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var td in todoObj)
+            {
+                <tr>
+                    <td>@td.id</td>
+                    <td>@td.Title</td>
+                    <td>@td.Description</td>
+                   
+                    <td>
+                        <a class="nav-link" href="Edit/@td.id">                           
+                            <span class="oi oi-pencil" aria-hidden="true">Edit</span>
+                        </a>
+                        <a class="nav-link" href="Delete/@td.id">
+                            <!--  <input type="button" class="btn btn-danger" @onclick="@Delete" value="Delete" />-->
+                          <span class="oi oi-trash" aria-hidden="true">Delete</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+
+
+
+@code {
+
+    ToDo todo_obj = new ToDo();  
+    List<ToDo> todoObj;
+    [Parameter]
+    public string Id { get; set; }  
+    private List<ToDo> ToDolist = new List<ToDo>();
+    public Guid userId;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+
+            var userId = Guid.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier));
+            ToDolist = await ToDoService.GetUsersToDoItems(userId);
+
+            todoObj = await Task.Run(() => ToDoService.GetAllToDos());
+
+
+        }
+        else
+        {
+            
+        }
+    }
+
+    protected async void CreateToDo()
+    {
+        todo_obj.userId = userId;
+        await ToDoService.InsertToDo(todo_obj);
+        NavigationManager.NavigateTo("ToDosList");
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("ToDosList");
+    }
+
+
+
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    

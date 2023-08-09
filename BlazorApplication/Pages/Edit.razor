@@ -1,0 +1,58 @@
+﻿@page "/Edit/{Id}"
+@using BlazorApplication.Model
+@using BlazorApplication.Data
+@inject ToDoService ToDoService
+@inject NavigationManager NavigationManager
+
+<h3>Edit a Task</h3>
+<hr />
+
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <input form="Id" class="form-control" @bind="@obj.id"/>
+            </div>
+        </div>
+        
+
+            <div class="form-group">
+                <label for="Title" class="control-label"> Title</label>
+                <input for="Title" class="form-control"  @bind="@obj.Title" />
+             </div>
+
+            <div class="form-group">
+                <label for="MiddleName" class="control-label"> Description</label>
+                <input for="MiddleName" class="form-control" @bind="@obj.Description" />
+           </div>
+           
+     </div>
+
+        <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@Update" value="Update" />
+                <input type="button" class="btn btn-primary" @onclick="@Cancel" value="Cancel" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    ToDo obj = new ToDo();
+    protected override async Task OnInitializedAsync()
+    {
+        obj = await Task.Run(() => ToDoService.GetToDoById(Convert.ToInt32(Id)));
+    }
+    protected async void Update()
+    {
+        await ToDoService.UpdateToDo(obj);
+        NavigationManager.NavigateTo("ToDosList");
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("ToDosList");
+    }
+}

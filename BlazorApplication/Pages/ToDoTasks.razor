@@ -96,14 +96,14 @@ else
 @code {
 
     ToDo todo_obj = new ToDo();  
-    
+
     [Parameter]
     public string Id { get; set; }  
 
     private List<ToDo> ToDolist = new List<ToDo>();    
     public Guid userId;
-    // private string? identity;
-    public string title, description;
+
+
 
 
 
@@ -119,24 +119,20 @@ else
 
             ToDolist = await ToDoService.GetUsersToDoItems(userId);            
 
-          
+
 
         }
 
     }
 
-  protected async void CreateToDo()
-      {
+    protected async void CreateToDo()
+    {
 
-          todo_obj.userId=userId;
-       
-          await ToDoService.Additem(todo_obj);
+        todo_obj.userId=userId;
+
+        await ToDoService.Additem(todo_obj);     
 
         ToDolist = await ToDoService.GetUsersToDoItems(userId);
-
-
-
-       // NavigationManager.NavigateTo("ToDosList");
       }
 
 

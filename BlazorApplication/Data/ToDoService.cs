@@ -94,7 +94,7 @@ namespace BlazorApplication.Data
         }
 
         //Update ToDo
-        /*  public async Task<bool> UpdateToDo(ToDo updateitem)
+         public async Task<bool> Update(ToDo updateitem)
           {
               updateitem.Title = Encrypt(updateitem.Title);
               updateitem.Description = Encrypt(updateitem.Description);
@@ -102,28 +102,28 @@ namespace BlazorApplication.Data
               _todoDbContext.Todos.Update(updateitem);
               await _todoDbContext.SaveChangesAsync();
               return true;
-          }*/
-
+          }
         /////////////////////////
         ///
 
         public async Task<bool> UpdateToDo(ToDo updateitem)
         {
-            // Calculate the hash of the original data
+            // Calculate the original hash before making any modifications
             string originalHash = CalculateHash(updateitem);
 
             // Update and encrypt the fields
-            updateitem.Title = Encrypt(updateitem.Title);
-            updateitem.Description = Encrypt(updateitem.Description);
+         //   updateitem.Title = Encrypt(updateitem.Title);
+        //    updateitem.Description = Encrypt(updateitem.Description);
+        
 
             // Update the record in the database
             _todoDbContext.Todos.Update(updateitem);
             await _todoDbContext.SaveChangesAsync();
 
-            // Calculate the hash of the updated data
+            //  Calculate the new hash after modifications
             string updatedHash = CalculateHash(updateitem);
 
-            // Compare the original hash with the updated hash
+            // Compare the new hash with the original hash
             if (originalHash != updatedHash)
             {
                 // Hash mismatch, indicating data tampering
@@ -149,11 +149,6 @@ namespace BlazorApplication.Data
         }
 
 
-        /// <summary>
-        /// ///////////////////
-        /// </summary>
-        /// <param name="ToDo"></param>
-        /// <returns></returns>
         //Delete ToDo
         public async Task<bool> DeleteToDo(ToDo ToDo)
         {

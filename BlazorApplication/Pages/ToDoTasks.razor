@@ -116,9 +116,7 @@ else
         {
 
             userId = Guid.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier));
-
             ToDolist = await ToDoService.GetUsersToDoItems(userId);            
-
 
 
         }

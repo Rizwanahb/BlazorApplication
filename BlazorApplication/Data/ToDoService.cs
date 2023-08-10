@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace BlazorApplication.Data
@@ -25,7 +26,7 @@ namespace BlazorApplication.Data
         {
             //return await _todoDbContext.Todos.Where(item => item.userId == userId).ToListAsync();
 
-            var todos = await _todoDbContext.Todos.Where(item => item.userId == userId).ToListAsync();
+            var todos = await _todoDbContext.Todos.Where(item => item.userId == userId).AsNoTracking().ToListAsync();
 
             foreach (var todo in todos)
             {
@@ -93,13 +94,66 @@ namespace BlazorApplication.Data
         }
 
         //Update ToDo
-        public async Task<bool> UpdateToDo(ToDo ToDo)
+        /*  public async Task<bool> UpdateToDo(ToDo updateitem)
+          {
+              updateitem.Title = Encrypt(updateitem.Title);
+              updateitem.Description = Encrypt(updateitem.Description);
+
+              _todoDbContext.Todos.Update(updateitem);
+              await _todoDbContext.SaveChangesAsync();
+              return true;
+          }*/
+
+        /////////////////////////
+        ///
+
+        public async Task<bool> UpdateToDo(ToDo updateitem)
         {
-            _todoDbContext.Todos.Update(ToDo);
+            // Calculate the hash of the original data
+            string originalHash = CalculateHash(updateitem);
+
+            // Update and encrypt the fields
+            updateitem.Title = Encrypt(updateitem.Title);
+            updateitem.Description = Encrypt(updateitem.Description);
+
+            // Update the record in the database
+            _todoDbContext.Todos.Update(updateitem);
             await _todoDbContext.SaveChangesAsync();
+
+            // Calculate the hash of the updated data
+            string updatedHash = CalculateHash(updateitem);
+
+            // Compare the original hash with the updated hash
+            if (originalHash != updatedHash)
+            {
+                // Hash mismatch, indicating data tampering
+                return false;
+            }
+
             return true;
         }
 
+        private string CalculateHash(ToDo item)
+        {
+            using (MD5 md5 = MD5.Create())
+            {
+                string data = $"{item.Title}{item.Description}";
+                byte[] hashBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(data));
+                StringBuilder sb = new StringBuilder();
+                foreach (byte b in hashBytes)
+                {
+                    sb.Append(b.ToString("x2")); // Convert to hexadecimal
+                }
+                return sb.ToString();
+            }
+        }
+
+
+        /// <summary>
+        /// ///////////////////
+        /// </summary>
+        /// <param name="ToDo"></param>
+        /// <returns></returns>
         //Delete ToDo
         public async Task<bool> DeleteToDo(ToDo ToDo)
         {

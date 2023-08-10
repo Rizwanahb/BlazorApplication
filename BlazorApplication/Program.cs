@@ -22,6 +22,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Services
 builder.Services.AddTransient<ToDoService>();
+builder.Services.AddDataProtection();
 
 
 

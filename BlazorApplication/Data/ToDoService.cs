@@ -1,6 +1,7 @@
 ﻿using BlazorApplication.Model;
 
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace BlazorApplication.Data
 {
@@ -13,17 +14,25 @@ namespace BlazorApplication.Data
         {
             _todoDbContext = todoDbContext;
         }
+        
 
         //Get UserId
         public async Task<List<ToDo>> GetUsersToDoItems(Guid userId)
         {
-          return _todoDbContext.Todos.Where(item => item.userId == userId).ToList();
-
+          return await _todoDbContext.Todos.Where(item => item.userId == userId).ToListAsync();
+             
         }
-
+        public async Task Additem (ToDo newItem)
+        {
+         
+            
+            _todoDbContext.Todos.Add(newItem);
+            await _todoDbContext.SaveChangesAsync();
+        }
         //List of ToDos
         public async Task<List<ToDo>> GetAllToDos()
         {
+            //context.toDo.Where(b => b.UserId == userId).ToListAsync();
             return await _todoDbContext.Todos.ToListAsync();
         }
 

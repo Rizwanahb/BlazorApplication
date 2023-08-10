@@ -22,11 +22,11 @@ namespace BlazorApplication.Data
                new()
                {
                    id = 1,
+                   userId = Guid.Parse("202f8468-44aa-47de-8002-193442a83701"),
                    Title = "Reading",
                    Description = "Read atleast 2 books in a week",
-                  // DateTime = DateTime.Now,
-                   //IsDone= true
-
+                 
+        
 
 
                },
@@ -35,7 +35,7 @@ namespace BlazorApplication.Data
                    id = 2,
                    Title = "Washing",
                    Description = "Do laundary",
-                  // DateTime = DateTime.Now,
+                   // DateTime = DateTime.Now,
                    //IsDone = false
                }
                );

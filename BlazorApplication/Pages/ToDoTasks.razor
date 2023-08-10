@@ -8,7 +8,7 @@
 
 
 <PageTitle>ToDo</PageTitle>
-<!---<h1>@userId</h1>--->
+<h1>@userId</h1>
 
 
 <h3>ToDo Items </h3>
@@ -41,7 +41,7 @@
 
 <hr />
 
-@if (todoObj is null)
+@if (ToDolist is null)
 {
     <p><em>Loading.................</em></p>
 }
@@ -67,7 +67,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var td in todoObj)
+            @foreach (var td in ToDolist)
             {
                 <tr>
                     <td>@td.id</td>
@@ -96,11 +96,15 @@ else
 @code {
 
     ToDo todo_obj = new ToDo();  
-    List<ToDo> todoObj;
+    
     [Parameter]
     public string Id { get; set; }  
-    private List<ToDo> ToDolist = new List<ToDo>();
+
+    private List<ToDo> ToDolist = new List<ToDo>();    
     public Guid userId;
+    // private string? identity;
+    public string title, description;
+
 
 
     protected override async Task OnInitializedAsync()
@@ -111,25 +115,34 @@ else
         if (user.Identity is not null && user.Identity.IsAuthenticated)
         {
 
-            var userId = Guid.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier));
-            ToDolist = await ToDoService.GetUsersToDoItems(userId);
+            userId = Guid.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            todoObj = await Task.Run(() => ToDoService.GetAllToDos());
+            ToDolist = await ToDoService.GetUsersToDoItems(userId);            
 
+          
 
         }
-        else
-        {
-            
-        }
+
     }
 
-    protected async void CreateToDo()
-    {
-        todo_obj.userId = userId;
-        await ToDoService.InsertToDo(todo_obj);
-        NavigationManager.NavigateTo("ToDosList");
-    }
+  protected async void CreateToDo()
+      {
+
+          todo_obj.userId=userId;
+       
+          await ToDoService.Additem(todo_obj);
+
+        ToDolist = await ToDoService.GetUsersToDoItems(userId);
+
+
+
+       // NavigationManager.NavigateTo("ToDosList");
+      }
+
+
+
+
+
     void Cancel()
     {
         NavigationManager.NavigateTo("ToDosList");
